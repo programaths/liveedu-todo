@@ -1,0 +1,12 @@
+@startuml
+Client -> DNS : What IP is behind "www.google.com"
+DNS --> Client : IP is 271.21.251.19
+Client -> Server
+note right
+GET / HTTP/1.1
+HOST: www.google.com
+
+
+end note
+Server --> Client
+@enduml
