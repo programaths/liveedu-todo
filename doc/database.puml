@@ -1,0 +1,25 @@
+@startuml
+!define table(x) class x <<(T,#FFAAAA)>>
+
+hide methods
+
+table(todos){
+  id : INTEGER
+  ===
+  user_id : INTEGER
+  title : VARCHAR(60)
+  done : BOOL
+  description: TEXT
+  ..
+  fk_user(user_id)
+}
+
+table(users){
+  id : INTEGER
+  nickname : VARCHAR(60)
+  pass : VARCHAR(255)
+}
+
+todos }o-|| users
+
+@enduml

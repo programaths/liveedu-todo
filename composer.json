@@ -1,6 +1,8 @@
 {
     "require": {
-        "silex/silex": "~2.0"
+        "silex/silex": "~2.0",
+        "sorien/silex-pimple-dumper": "~2.0",
+        "doctrine/dbal": "~2.2"
     },
     "autoload" : {
         "psr-4":{
