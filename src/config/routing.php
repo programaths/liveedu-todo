@@ -37,7 +37,21 @@ $app->patch('/api/v2-0/users','user.controller:patch')
 $app->delete('/api/v2-0/users/{id}','user.controller:delete')
     ->bind('user_delete');
 
-
 $app->get('/api/v2-0/users/{id}','user.controller:get')
     ->assert('id','\d+')
     ->bind('user_get');
+
+
+
+$app->get('/api/v2-0/todos/{id}','todo.controller:get')
+    ->assert('id','\d+')
+    ->bind('todo_get');
+
+$app->delete('/api/v2-0/todos/{id}','todo.controller:delete')
+    ->bind('todo_delete');
+
+$app->patch('/api/v2-0/todos','todo.controller:patch')
+    ->bind('todo_patch');
+
+$app->post('/api/v2-0/users','todo.controller:post')
+    ->bind('todo_post');

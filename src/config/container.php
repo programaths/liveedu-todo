@@ -6,8 +6,10 @@
  * Time: 20:33
  */
 
+use Programaths\LiveEdu\Todo\Controllers\TodoController;
 use Programaths\LiveEdu\Todo\Controllers\UserController;
 use Programaths\LiveEdu\Todo\Services\RouteTemplating;
+use Programaths\LiveEdu\Todo\Services\TodoRepository;
 use Programaths\LiveEdu\Todo\Services\UserRepository;
 
 $app = new \Silex\Application();
@@ -34,6 +36,14 @@ $app['user.repository'] = function() use($app) {
 
 $app['user.controller'] = function() use($app) {
     return new UserController($app['user.repository']);
+};
+
+$app['todo.repository'] = function() use($app) {
+    return new TodoRepository($app['db']);
+};
+
+$app['todo.controller'] = function() use($app) {
+    return new TodoController($app['todo.repository']);
 };
 
 $app['templating'] = function () use ($app) {
