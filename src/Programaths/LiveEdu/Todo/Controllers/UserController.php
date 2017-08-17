@@ -34,6 +34,11 @@ class UserController
         $createdUser = $this->userRepo->create($request->request->all());
         return RedirectResponse::create("/api/v2-0/users/{$createdUser['id']}", Response::HTTP_CREATED);
     }
+
+    public function all(Request $request){
+        return ['users'=>$this->userRepo->find()];
+    }
+
     public function get(Request $request,$id){
         try {
             $user = $this->userRepo->load($id);

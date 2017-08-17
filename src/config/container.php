@@ -52,6 +52,10 @@ $app['templating'] = function () use ($app) {
             'user_get' => [
                 'xml' => 'user.html',
                 'tss' => 'user.tss'
+            ],
+            'user_all' => [
+                'xml' => 'user_all.html',
+                'tss' => 'user_all.tss'
             ]
         ],
         'baseFolder' => __DIR__.'/templates'

@@ -21,4 +21,6 @@ interface UserRepositoryInterface
     function load($id);
 
     function create($user);
+
+    public function find();
 }

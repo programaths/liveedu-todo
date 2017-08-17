@@ -1,0 +1,3 @@
+.user {repeat: data(users); }
+.user .id {content: iteration(id); }
+.user .nick-name {content: iteration(nickname); }

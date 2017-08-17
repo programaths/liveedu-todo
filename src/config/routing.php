@@ -41,6 +41,9 @@ $app->get('/api/v2-0/users/{id}','user.controller:get')
     ->assert('id','\d+')
     ->bind('user_get');
 
+$app->get('/api/v2-0/users/','user.controller:all')
+    ->bind('user_all');
+
 
 
 $app->get('/api/v2-0/todos/{id}','todo.controller:get')
