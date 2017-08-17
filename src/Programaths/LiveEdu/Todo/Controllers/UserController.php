@@ -36,7 +36,7 @@ class UserController
     }
 
     public function all(Request $request){
-        return ['users'=>$this->userRepo->find()];
+        return $this->userRepo->find();
     }
 
     public function get(Request $request,$id){
