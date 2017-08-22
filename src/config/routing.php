@@ -56,5 +56,8 @@ $app->delete('/api/v2-0/todos/{id}','todo.controller:delete')
 $app->patch('/api/v2-0/todos','todo.controller:patch')
     ->bind('todo_patch');
 
-$app->post('/api/v2-0/users','todo.controller:post')
+$app->post('/api/v2-0/todos','todo.controller:post')
     ->bind('todo_post');
+
+$app->get('/api/v2-0/todos/','todo.controller:all')
+    ->bind('todo_all');

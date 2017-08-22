@@ -1,0 +1,19 @@
+.todo-item{
+    repeat: data();
+}
+
+.todo.title {
+    content: iteration(title);
+}
+
+.todo.description {
+    content: iteration(description);
+}
+
+.todo.done:iteration[done=1]{
+    content: 'done';
+}
+
+.todo.done:iteration[done=0]{
+    content: 'to do';
+}

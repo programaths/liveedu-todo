@@ -22,4 +22,6 @@ interface TodoRepositoryInterface
     function load($id);
 
     function create($todo);
+
+    function find();
 }

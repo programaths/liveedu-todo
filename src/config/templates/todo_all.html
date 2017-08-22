@@ -1,0 +1,31 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+</head>
+<body>
+<h1>Todos details</h1>
+
+<form method="post" action="/api/v2-0/todos">
+    <div><label>
+        User id : <input type="number" name="user_id">
+    </label></div>
+    <div><label>
+        Title <input name="title"/>
+    </label></div>
+    <div><label>
+        Description <textarea name="description"></textarea>
+    </label></div>
+    <div><label>
+        Done ? <input type="checkbox" name="done" value="true"/>
+    </label></div>
+    <input type="submit"/>
+</form>
+
+<div class="todo-item">
+    <div class="todo title">{{title}}</div>
+    <div class="todo description">{{description}}</div>
+    <div class="todo done">{{done}}</div>
+</div>
+</body>
+</html>

@@ -56,7 +56,15 @@ $app['templating'] = function () use ($app) {
             'user_all' => [
                 'xml' => 'user_all.html',
                 'tss' => 'user_all.tss'
-            ]
+            ],
+            'todo_get' => [
+                'xml' => 'todo.html',
+                'tss' => 'todo.tss'
+            ],
+            'todo_all' => [
+                'xml' => 'todo_all.html',
+                'tss' => 'todo_all.tss'
+            ],
         ],
         'baseFolder' => __DIR__.'/templates'
     ]);

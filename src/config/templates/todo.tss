@@ -1,0 +1,15 @@
+.todo.title {
+    content: data(title);
+}
+
+.todo.description {
+    content: data(description);
+}
+
+.todo.done:data[done=1]{
+    content: 'done';
+}
+
+.todo.done:data[done=0]{
+    content: 'to do';
+}

@@ -60,4 +60,8 @@ class TodoController
         $this->todoRepo->delete($id);
         return Response::create();
     }
+
+    public function all(Request $request){
+        return $this->todoRepo->find();
+    }
 }

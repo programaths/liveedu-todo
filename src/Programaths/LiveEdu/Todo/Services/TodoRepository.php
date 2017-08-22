@@ -89,4 +89,15 @@ class TodoRepository implements TodoRepositoryInterface
         return $user;
     }
 
+    function find() {
+        $stm = $this->db->prepare(
+            'SELECT id, user_id, done, title, description FROM todos'
+        );
+
+        if($stm->execute()){
+            $result = $stm->fetchAll(PDO::FETCH_ASSOC);
+            return $result;
+        }
+        return [];
+    }
 }
