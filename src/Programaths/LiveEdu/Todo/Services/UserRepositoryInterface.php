@@ -23,4 +23,6 @@ interface UserRepositoryInterface
     function create($user);
 
     public function find();
+
+    public function findByUsername($username);
 }

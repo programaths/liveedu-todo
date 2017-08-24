@@ -3,7 +3,9 @@
         "silex/silex": "~2.0",
         "sorien/silex-pimple-dumper": "~2.0",
         "doctrine/dbal": "~2.2",
-        "level-2/transphporm": "^1.1"
+        "level-2/transphporm": "^1.1",
+        "symfony/security": "^3.3",
+        "monolog/monolog": "^1.23"
     },
     "autoload" : {
         "psr-4":{

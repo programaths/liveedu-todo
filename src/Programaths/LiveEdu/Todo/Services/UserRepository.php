@@ -90,4 +90,13 @@ class UserRepository implements UserRepositoryInterface
         }
         return $stm->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function findByUsername($username)
+    {
+        $stm = $this->db->prepare('SELECT nickname,pass FROM users');
+        if($stm->execute()===false){
+            return null;
+        }
+        return $stm->fetch(PDO::FETCH_ASSOC);
+    }
 }

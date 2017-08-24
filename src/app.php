@@ -19,6 +19,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 include __DIR__.'/../vendor/autoload.php';
 
 include __DIR__.'/config/container.php';
+include __DIR__.'/config/security.php';
 include __DIR__.'/config/routing.php';
 
 return $app;
