@@ -12,6 +12,7 @@ use Programaths\LiveEdu\Todo\Services\RouteTemplating;
 use Programaths\LiveEdu\Todo\Services\TodoRepository;
 use Programaths\LiveEdu\Todo\Services\UserProvider;
 use Programaths\LiveEdu\Todo\Services\UserRepository;
+use Symfony\Component\HttpFoundation\RequestMatcher;
 
 $app = new \Silex\Application();
 $app['debug'] = true;
@@ -26,6 +27,10 @@ $app->extend('monolog', function(Monolog\Logger $monolog, $app) {
 });
 
 $app['security.firewalls'] = array(
+    'public' => [
+        'pattern' => new RequestMatcher('^/api/v2-0/users',null,'POST'),
+        'security' => false
+    ],
     'admin' => [
         'pattern' => '^/api/v2-0/users',
         'stateless' => true,
@@ -59,7 +64,7 @@ $app['user.provider'] = function () use($app){
 };
 
 $app['user.repository'] = function() use($app) {
-    return new UserRepository($app['db']);
+    return new UserRepository($app['db'],$app['security.default_encoder']);
 };
 
 $app['user.controller'] = function() use($app) {

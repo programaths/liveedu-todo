@@ -12,6 +12,7 @@ namespace Programaths\LiveEdu\Todo\Services;
 use Doctrine\DBAL\Driver\Connection;
 use PDO;
 use Programaths\LiveEdu\Todo\Exceptions\UserNotFound;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -19,10 +20,15 @@ class UserRepository implements UserRepositoryInterface
      * @var Connection
      */
     private $db;
+    /**
+     * @var PasswordEncoderInterface
+     */
+    private $encoder;
 
-    public function __construct(Connection $db)
+    public function __construct(Connection $db, PasswordEncoderInterface $encoder)
     {
         $this->db = $db;
+        $this->encoder = $encoder;
     }
 
     /**
@@ -69,12 +75,14 @@ class UserRepository implements UserRepositoryInterface
         throw new UserNotFound("User with id $id was not found");
     }
 
+
+
     function create($user){
         $insertUser = $this->db->prepare('INSERT INTO users(nickname, pass) VALUES (:nick,:pass) RETURNING id;');
 
         $insertUser->execute([
             ':nick' => $user['nickname'],
-            ':pass' => $user['pass']
+            ':pass' => $this->encoder->encodePassword($user['pass'],null)
         ]);
 
         $lid = $insertUser->fetchColumn();
@@ -93,10 +101,14 @@ class UserRepository implements UserRepositoryInterface
 
     public function findByUsername($username)
     {
-        $stm = $this->db->prepare('SELECT nickname,pass FROM users');
-        if($stm->execute()===false){
+        $stm = $this->db->prepare('SELECT nickname,pass FROM users WHERE nickname=:nick');
+        if($stm->execute([':nick'=>$username])===false){
             return null;
         }
-        return $stm->fetch(PDO::FETCH_ASSOC);
+        $result = $stm->fetch(PDO::FETCH_ASSOC);
+        if($result===false){
+            return null;
+        }
+        return $result;
     }
 }

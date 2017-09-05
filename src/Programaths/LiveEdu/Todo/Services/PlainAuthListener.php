@@ -12,6 +12,7 @@ namespace Programaths\LiveEdu\Todo\Services;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Encoder\PasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
@@ -19,6 +20,16 @@ use Symfony\Component\Security\Guard\AbstractGuardAuthenticator;
 
 class PlainAuthListener extends AbstractGuardAuthenticator
 {
+
+    /**
+     * @var PasswordEncoderInterface
+     */
+    private $encoder;
+
+    public function __construct(PasswordEncoderInterface $encoder)
+    {
+        $this->encoder = $encoder;
+    }
 
     /**
      * Returns a response that directs the user to authenticate.
@@ -112,8 +123,7 @@ class PlainAuthListener extends AbstractGuardAuthenticator
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
-
-        return $credentials['password'] == $user->getPassword();
+        return $this->encoder->isPasswordValid($user->getPassword(),$credentials['password'],null);
     }
 
     /**

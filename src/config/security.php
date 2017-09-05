@@ -6,6 +6,10 @@
  * Time: 21:19
  */
 
-$app['app.token_authenticator'] = function ($app) {
-    return new \Programaths\LiveEdu\Todo\Services\PlainAuthListener();
+$app['app.token_authenticator'] = function () use($app) {
+    return new \Programaths\LiveEdu\Todo\Services\PlainAuthListener($app['security.default_encoder']);
+};
+
+$app['security.default_encoder'] = function(){
+    return new \Programaths\LiveEdu\Todo\Services\PasswordVerifyEncoder();
 };
