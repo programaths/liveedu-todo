@@ -75,14 +75,21 @@ class UserRepository implements UserRepositoryInterface
         throw new UserNotFound("User with id $id was not found");
     }
 
-
+    private function createRandomPrivateKey(){
+        $key='';
+        for($i=0;$i<32;$i++){
+            $key.=chr(65+rand(0,26));
+        }
+        return $key;
+    }
 
     function create($user){
-        $insertUser = $this->db->prepare('INSERT INTO users(nickname, pass) VALUES (:nick,:pass) RETURNING id;');
+        $insertUser = $this->db->prepare('INSERT INTO users(nickname, pass,private_key) VALUES (:nick,:pass,:pkey) RETURNING id;');
 
         $insertUser->execute([
             ':nick' => $user['nickname'],
-            ':pass' => $this->encoder->encodePassword($user['pass'],null)
+            ':pass' => $this->encoder->encodePassword($user['pass'],null),
+            ':pkey' => $this->createRandomPrivateKey()
         ]);
 
         $lid = $insertUser->fetchColumn();
@@ -101,7 +108,7 @@ class UserRepository implements UserRepositoryInterface
 
     public function findByUsername($username)
     {
-        $stm = $this->db->prepare('SELECT nickname,pass FROM users WHERE nickname=:nick');
+        $stm = $this->db->prepare('SELECT nickname,pass,private_key FROM users WHERE nickname=:nick');
         if($stm->execute([':nick'=>$username])===false){
             return null;
         }

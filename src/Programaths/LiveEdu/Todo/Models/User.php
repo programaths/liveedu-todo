@@ -67,6 +67,11 @@ class User implements UserInterface
         return null;
     }
 
+    public function getPrivateKey()
+    {
+        return $this->userData['private_key'];
+    }
+
     /**
      * Returns the username used to authenticate the user.
      *

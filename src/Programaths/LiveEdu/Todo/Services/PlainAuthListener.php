@@ -9,6 +9,7 @@
 namespace Programaths\LiveEdu\Todo\Services;
 
 
+use Programaths\LiveEdu\Todo\Models\User;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -54,6 +55,10 @@ class PlainAuthListener extends AbstractGuardAuthenticator
         return new Response('Auth header required', 401);
     }
 
+    private function computeToken($timeStamp,$nonce,$secret,$pass){
+        return base64_encode(sha1($secret.$pass.sha1( $timeStamp.$nonce,true),true));
+    }
+
     /**
      * Get the authentication credentials from the request and return them
      * as any type (e.g. an associate array). If you return null, authentication
@@ -82,7 +87,16 @@ class PlainAuthListener extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
-        return array('user'=>$request->headers->get('X-API-USER'),'password'=>$request->headers->get('X-API-PASS'));
+        // X-WSSE : username="john", token="base64", nonce="plain string", timestamp="ISO-8691"
+        $parts = explode(",",$request->headers->get('X-WSSE'));
+        $credentials = [];
+        foreach ($parts as $part){
+            list($key,$val) = explode("=",trim($part),2);
+            $val = trim($val);
+            $val = substr($val,1,-1);
+            $credentials[$key] = $val;
+        }
+        return $credentials;
     }
 
     /**
@@ -102,7 +116,7 @@ class PlainAuthListener extends AbstractGuardAuthenticator
      */
     public function getUser($credentials, UserProviderInterface $userProvider)
     {
-        return $userProvider->loadUserByUsername($credentials['user']);
+        return $userProvider->loadUserByUsername($credentials['username']);
     }
 
     /**
@@ -123,7 +137,10 @@ class PlainAuthListener extends AbstractGuardAuthenticator
      */
     public function checkCredentials($credentials, UserInterface $user)
     {
-        return $this->encoder->isPasswordValid($user->getPassword(),$credentials['password'],null);
+        /** @var  User $user */
+        $expectedToken = $this->computeToken($credentials['timestamp'],$credentials['nonce'],$user->getPrivateKey(),$user->getPassword());
+        return $expectedToken == $credentials['token'];
+        //return $this->encoder->isPasswordValid($user->getPassword(),$credentials['password'],null);
     }
 
     /**
