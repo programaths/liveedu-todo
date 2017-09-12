@@ -59,6 +59,10 @@ class PlainAuthListener extends AbstractGuardAuthenticator
         return base64_encode(sha1($secret.$pass.sha1( $timeStamp.$nonce,true),true));
     }
 
+    private function computeHmac($requestContent,$secret){
+        return base64_encode(hash_hmac('sha1',$requestContent,$secret,true));
+    }
+
     /**
      * Get the authentication credentials from the request and return them
      * as any type (e.g. an associate array). If you return null, authentication
@@ -87,15 +91,30 @@ class PlainAuthListener extends AbstractGuardAuthenticator
      */
     public function getCredentials(Request $request)
     {
+        // X-HMAC : base64
         // X-WSSE : username="john", token="base64", nonce="plain string", timestamp="ISO-8691"
         $parts = explode(",",$request->headers->get('X-WSSE'));
         $credentials = [];
+        $allowedKeys = [
+            'username' => true, 'token' => true, 'nonce' => true, 'timestamp' => true,'hmac' => true, 'request_hmac' => true
+        ];
+
         foreach ($parts as $part){
             list($key,$val) = explode("=",trim($part),2);
+            if(!isset($allowedKeys[$key])){ continue; }
             $val = trim($val);
             $val = substr($val,1,-1);
             $credentials[$key] = $val;
         }
+
+        $credentials['hmac']='';
+        $credentials['request_hmac']='';
+
+        if($request->getMethod()=='POST' || $request->getMethod()=='PUT'){
+            $credentials['hmac'] =  $request->headers->get('X-HMAC','');
+            $credentials['request_hmac'] = $request->getContent();
+        }
+
         return $credentials;
     }
 
@@ -139,7 +158,8 @@ class PlainAuthListener extends AbstractGuardAuthenticator
     {
         /** @var  User $user */
         $expectedToken = $this->computeToken($credentials['timestamp'],$credentials['nonce'],$user->getPrivateKey(),$user->getPassword());
-        return $expectedToken == $credentials['token'];
+        $expectedHmac = $this->computeHmac($credentials['request_hmac'],$user->getPrivateKey());
+        return ($expectedToken == $credentials['token']) && ($credentials['hmac'] == $expectedHmac);
         //return $this->encoder->isPasswordValid($user->getPassword(),$credentials['password'],null);
     }
 

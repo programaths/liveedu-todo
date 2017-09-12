@@ -32,7 +32,7 @@ $app['security.firewalls'] = array(
         'security' => false
     ],
     'admin' => [
-        'pattern' => '^/api/v2-0/users',
+        'pattern' => '^/api/v2-0/(users|todos)',
         'stateless' => true,
         'guard'=>[
             'authenticators' => array(
