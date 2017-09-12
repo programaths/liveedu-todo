@@ -3,11 +3,6 @@
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-$app->get('/',function(Request $request) use($app) {
-    $helloWorld = new \Programaths\LiveEdu\Todo\HelloWorld();
-    return JsonResponse::create($helloWorld->helloWorld());
-});
-
 $app->before(function (Request $request) {
 
     $contentType = $request->headers->get('Content-Type','application/json');
@@ -27,6 +22,8 @@ $app->view(function ($controllerResult, Request $request) use ($app) {
     }
     return JsonResponse::create($controllerResult);
 });
+
+
 
 $app->post('/api/v2-0/users','user.controller:post')
     ->bind('user_post');
@@ -61,3 +58,7 @@ $app->post('/api/v2-0/todos','todo.controller:post')
 
 $app->get('/api/v2-0/todos/','todo.controller:all')
     ->bind('todo_all');
+
+$app->get('/',function(){
+    return '';
+})->bind('spa');

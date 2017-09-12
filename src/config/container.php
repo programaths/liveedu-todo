@@ -98,6 +98,10 @@ $app['templating'] = function () use ($app) {
                 'xml' => 'todo_all.html',
                 'tss' => 'todo_all.tss'
             ],
+            'spa' => [
+                'xml' => 'spa.html',
+                'tss' => 'spa.tss'
+            ]
         ],
         'baseFolder' => __DIR__.'/templates'
     ]);
