@@ -3,6 +3,10 @@
     <meta charset="UTF-8" />
     <title>Title</title>
     <script src="https://unpkg.com/vue@2.4.2/dist/vue.js" integrity="sha384-YkRNxqm9SgE0mwVuPjmtrhpJu121RkMPVGy8EWvcQcUihpZmVrnlJeuiOwr85wVZ" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios@0.16.2/dist/axios.min.js" integrity="sha384-E9DmiLLkKajZwNkTCJM0IPxpmkK0MCutM1sCcMsGrnPX4JZcJYo1J+9PP9ieTZnh" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/hmac-sha1.js" integrity="sha384-vza/orfOTY6zV4Xu0wASpuE3u6m42iqfBHVrElhSgyk0+2DPJaKifVRaWCjQUcYJ" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/components/enc-base64.js" integrity="sha384-52dS6DCjjm8QXlJdB3hVhnpzroszOwdL2AQroYlHuX5ZXJkoHxd8mUYH6cH3B7aV" crossorigin="anonymous"></script>
+    <script src="/vendor/bcrypt.min.js"></script>
 </head>
 <body>
 
@@ -15,6 +19,57 @@
                 'name' : 'Live-edu'
             }
         });
+
+        // private function computeToken($timeStamp,$nonce,$secret,$pass){
+//        return base64_encode(sha1($secret.$pass.sha1( $timeStamp.$nonce,true),true));
+//        }
+        function wsse(timestamp,nonce,secret,pass){
+            let innerBytes = CryptoJS.enc.Utf8.parse(timestamp);
+            innerBytes.concat(CryptoJS.enc.Utf8.parse(nonce));
+            innerBytes = CryptoJS.SHA1(innerBytes);
+            let outerBytes = CryptoJS.enc.Utf8.parse(secret);
+            outerBytes.concat(CryptoJS.enc.Utf8.parse(pass));
+            outerBytes.concat(innerBytes);
+            return CryptoJS.enc.Base64.stringify(CryptoJS.SHA1(outerBytes));
+        }
+
+
+        // http://localhost:8080{{apiPath}}/todos
+        let http = axios.create({
+            baseURL: 'http://localhost:8080/api/v2-0',
+
+            // `transformRequest` allows changes to the request data before it is sent to the server
+            // This is only applicable for request methods 'PUT', 'POST', and 'PATCH'
+            // The last function in the array must return a string or an instance of Buffer, ArrayBuffer,
+            // FormData or Stream
+            // You may modify the headers object.
+            transformRequest: [function (data, headers) {
+                headers['Content-Type']='application/json';
+//                $base64_digits =
+//                    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+//                $bcrypt64_digits =
+//                    './ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                let bcrypt = dcodeIO.bcrypt;
+                let pass = bcrypt.hashSync('1234','$2y$10$HE/OE0aUB/8lauZkWItafO');
+                let message = JSON.stringify(data);
+                let encrypted = CryptoJS.HmacSHA1(message, 'UWHPDXGEXBYOBKKOEQXDYE[HEJHAXFAQ');
+                headers['X-HMAC']=CryptoJS.enc.Base64.stringify(encrypted);
+                // // X-WSSE : username="john", token="base64", nonce="plain string", timestamp="ISO-8691"
+                // This uses hard coded values for demonstration purpose
+                headers['X-WSSE']='username="secure1234", token="'+wsse('2017-09-14T21:02:00','simplenonce','UWHPDXGEXBYOBKKOEQXDYE[HEJHAXFAQ',pass)+'", nonce="simplenonce", timestamp="2017-09-14T21:02:00"';
+
+                return message;
+            }],
+        });
+        http.post('/todos', {
+            'foo' :'123'
+        })
+            .then(function (response) {
+                console.log(response);
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
     </script>
 </body>
 </html>
